@@ -42,15 +42,11 @@ namespace _03_03_CronScheduler
         public static MemoryStream FillAndSend()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
             MemoryStream ms;
-
             using (ExcelPackage package = new ExcelPackage())                           //Creating and Filling Excel worksheet
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet 1");
-
                 DataTable GetDT = GetData();
-
                 worksheet.Cells[1, 1].Value = "UserId";
                 worksheet.Cells[1, 2].Value = "FirstName";
                 worksheet.Cells[1, 3].Value = "LastName";
@@ -73,32 +69,33 @@ namespace _03_03_CronScheduler
                     }
                 }
                 ms = new MemoryStream(package.GetAsByteArray());
-
                 return ms;
             }
-
         }
         public static void EmailSender()
         {
             using (MailMessage mail = new MailMessage())
             {
                 MemoryStream attachment = FillAndSend();
-                var mailOut = "h*************";                   //Sender E-Mail
-                var pswMailOut = "************";                        //Sender E-mail's password
-                var displayNameMailOut = "**********";                       //Sender Name
+                var mailOut = "*********";                     //Sender E-Mail
+                var pswMailOut = "*******";                              //Sender E-mail's password
+                var displayNameMailOut = "********";                             //Sender Name
                 SmtpClient client = new SmtpClient();
                 client.Credentials = new System.Net.NetworkCredential(mailOut, pswMailOut);
                 client.Port = 587;
-                client.Host = "smtp.gmail.com";
+                client.Host = "smtp.yandex.com";
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.EnableSsl = true;
 
-                mail.From = new MailAddress(mailOut, displayNameMailOut);   //Receiver Email and name should replace with 'mailOut' and 'displayNameMailOut' variables
-                mail.To.Add(new MailAddress(mailOut));
+                mail.From = new MailAddress(mailOut, displayNameMailOut);         //Receiver Email and name should replace with 'mailOut' and 'displayNameMailOut' variables
+                var addresses = "halil.toptas@metadiag.com.tr;halil.toptas@metadiag.com.tr;halil.toptas@metadiag.com.tr";
+                foreach (var address in addresses.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    mail.To.Add(address);
+                }
                 mail.Subject = "Mail Title";
                 mail.Body = "Mail Text";
                 mail.Attachments.Add(new Attachment(attachment, $"{DateTime.Today.ToShortDateString()}_NewUsers.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-
                 client.Send(mail);
             }
         }
