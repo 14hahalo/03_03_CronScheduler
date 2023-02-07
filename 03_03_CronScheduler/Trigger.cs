@@ -18,7 +18,7 @@ namespace _03_03_CronScheduler
         {
             IScheduler sched = Begin();
             IJobDetail Mission = JobBuilder.Create<Job>().WithIdentity("Mission", null).Build();
-            ITrigger MissionTrigger = TriggerBuilder.Create().WithIdentity("Mission").WithSchedule(CronScheduleBuilder.CronSchedule("0 32 09 ? * MON")).Build(); // Every Monday 09:32 AM completes this task.
+            ITrigger MissionTrigger = TriggerBuilder.Create().WithIdentity("Mission").WithSchedule(CronScheduleBuilder.CronSchedule("0 31 09 * * ?")).Build(); // Every Monday 09:32 AM completes this task.
             sched.ScheduleJob(Mission, MissionTrigger);
             sched.Start();
         }
